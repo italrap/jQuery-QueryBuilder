@@ -248,10 +248,18 @@ QueryBuilder.extend(/** @lends module:plugins.SqlSupport.prototype */ {
      */
     getSQL: function(stmt, nl, data) {
         data = (data === undefined) ? this.getRules() : data;
+
         nl = !!nl ? '\n' : ' ';
+
+        if (!data) {
+            return null;
+        }
+
         var boolean_as_integer = this.getPluginOptions('sql-support', 'boolean_as_integer');
 
-        if (stmt === true) stmt = 'question_mark';
+        if (stmt === true) {
+            stmt = 'question_mark';
+        }
         if (typeof stmt == 'string') {
             var config = getStmtConfig(stmt);
             stmt = this.settings.sqlStatements[config[1]](config[2]);
@@ -296,10 +304,10 @@ QueryBuilder.extend(/** @lends module:plugins.SqlSupport.prototype */ {
                                 value += sql.sep;
                             }
 
-                            if (rule.type == 'integer' || rule.type == 'double' || rule.type == 'boolean') {
-                                v = Utils.changeType(v, rule.type, boolean_as_integer);
+                            if (rule.type == 'boolean' && boolean_as_integer) {
+                                v = v ? 1 : 0;
                             }
-                            else if (!stmt) {
+                            else if (!stmt && rule.type !== 'integer' && rule.type !== 'double' && rule.type !== 'boolean') {
                                 v = Utils.escapeString(v);
                             }
 

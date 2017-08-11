@@ -109,11 +109,6 @@ $(function () {
             Utils.changeType('true', 'boolean') === true,
             '"true" should be parsed as boolean'
         );
-
-        assert.ok(
-            Utils.changeType('false', 'boolean', true) === 0,
-            '"false" should be parsed as integer'
-        );
     });
 
     /**

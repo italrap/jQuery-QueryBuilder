@@ -394,11 +394,20 @@ QueryBuilder.prototype.getRuleInputValue = function(rule) {
             }
         }
 
-        if (operator.multiple && filter.value_separator) {
-            value = value.map(function(val) {
-                return val.split(filter.value_separator);
-            });
-        }
+        value = value.map(function(val) {
+            if (operator.multiple && filter.value_separator && typeof val == 'string') {
+                val = val.split(filter.value_separator);
+            }
+
+            if ($.isArray(val)) {
+                return val.map(function(subval) {
+                    return Utils.changeType(subval, filter.type);
+                });
+            }
+            else {
+                return Utils.changeType(val, filter.type);
+            }
+        });
 
         if (operator.nb_inputs === 1) {
             value = value[0];

@@ -103,17 +103,18 @@ Utils.error = function() {
  * Changes the type of a value to int, float or bool
  * @param {*} value
  * @param {string} type - 'integer', 'double', 'boolean' or anything else (passthrough)
- * @param {boolean} [boolAsInt=false] - return 0 or 1 for booleans
  * @returns {*}
  */
-Utils.changeType = function(value, type, boolAsInt) {
+Utils.changeType = function(value, type) {
+    if (value === '') {
+        return undefined;
+    }
+
     switch (type) {
         // @formatter:off
     case 'integer': return parseInt(value);
     case 'double': return parseFloat(value);
-    case 'boolean':
-        var bool = value.trim().toLowerCase() === 'true' || value.trim() === '1' || value === 1;
-        return boolAsInt ? (bool ? 1 : 0) : bool;
+    case 'boolean': return value === true || value === 1 || value.trim().toLowerCase() === 'true' || value.trim() === '1';
     default: return value;
     // @formatter:on
     }
