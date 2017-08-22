@@ -297,7 +297,7 @@ QueryBuilder.extend(/** @lends module:plugins.SqlSupport.prototype */ {
                             }
 
                             if (rule.type == 'integer' || rule.type == 'double' || rule.type == 'boolean') {
-                                v = Utils.changeType(v, rule.type, boolean_as_integer);
+                                v = Utils.changeType(v, rule.type, true);
                             }
                             else if (!stmt) {
                                 v = Utils.escapeString(v);
@@ -311,10 +311,37 @@ QueryBuilder.extend(/** @lends module:plugins.SqlSupport.prototype */ {
                                 value += stmt.add(rule, v);
                             }
                             else {
-                                if (typeof v == 'string') {
-                                    v = '\'' + v + '\'';
-                                }
-
+                            	if (sql.ic) {
+	                            	if (sql.sep) {
+		                            	if (typeof v === 'string') { 
+		                            		v = v.split(',').map(function(e) { return '\'' + e.trim().toLowerCase()+ '\'';});
+		                            	}
+		  							    else {
+		  							    	v = v.map(function(e) { return e.trim().toLowerCase();});
+		  							    }
+	                            	} else {
+	                            		v = v.toLowerCase();
+	                            		if (typeof v == 'string') {
+	                                    	v = '\'' + v + '\'';
+	                                    }
+	                            	}
+                            	} else {
+                            		if (sql.sep) {
+		                            	if (typeof v === 'string') { 
+		                            		v = v.split(',').map(function(e) { return '\'' + e.trim()+ '\'';});
+		                            	}
+		  							    else {
+		  							    	v = v.map(function(e) { return e.trim();});
+		  							    }
+	                            	} else {
+	                            		if (typeof v == 'string') {
+	                                    	v = '\'' + v + '\'';
+	                                    }
+	                            	}
+                            	}
+                                /*if (typeof v == 'string') {
+                                	v = '\'' + v + '\'';
+                                }*/
                                 value += v;
                             }
                         });
