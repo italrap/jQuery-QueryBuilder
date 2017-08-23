@@ -5397,9 +5397,9 @@ QueryBuilder.extend(/** @lends module:plugins.SqlSupport.prototype */ {
 		                            	if (typeof v === 'string') { 
 		                            		v = v.split(',').map(function(e) { return '\'' + e.trim().toLowerCase()+ '\'';});
 		                            	}
-		  							    else {
-		  							    	v = v.map(function(e) { return e.trim().toLowerCase();});
-		  							    }
+		  			        else if (Array.isArray(v)) {
+		  				    	v = v.map(function(e) { return e.toString().trim().toLowerCase();});
+		  			        }
 	                            	} else {
 	                            		v = v.toLowerCase();
 	                            		if (typeof v == 'string') {
@@ -5408,12 +5408,12 @@ QueryBuilder.extend(/** @lends module:plugins.SqlSupport.prototype */ {
 	                            	}
                             	} else {
                             		if (sql.sep) {
-		                            	if (typeof v === 'string') { 
-		                            		v = v.split(',').map(function(e) { return '\'' + e.trim()+ '\'';});
-		                            	}
-		  							    else {
-		  							    	v = v.map(function(e) { return e.trim();});
-		  							    }
+		                            if (typeof v === 'string') { 
+		                            	v = v.split(',').map(function(e) { return '\'' + e.trim()+ '\'';});
+		                            }
+		  			    else if (Array.isArray(v)) {
+		  			    	v = v.map(function(e) { return e.toString().trim();});
+		  			    }
 	                            	} else {
 	                            		if (typeof v == 'string') {
 	                                    	v = '\'' + v + '\'';
