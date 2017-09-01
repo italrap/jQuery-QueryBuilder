@@ -5657,7 +5657,7 @@ QueryBuilder.extend(/** @lends module:plugins.SqlSupport.prototype */ {
                             if (rule.type == 'integer' || rule.type == 'double' || rule.type == 'boolean') {
                                 v = Utils.changeType(v, rule.type, true);
                             }
-                            else if (!stmt) {
+                            else if (!stmt && rule.type != 'datetime') {
                                 v = Utils.escapeString(v);
                             }
 
@@ -5684,18 +5684,32 @@ QueryBuilder.extend(/** @lends module:plugins.SqlSupport.prototype */ {
 	                                    }
 	                            	}
                             	} else {
-                            		if (sql.sep) {
-		                            if (typeof v === 'string') { 
-		                            	v = v.split(',').map(function(e) { return '\'' + e.trim()+ '\'';});
-		                            }
-		  			    else if (Array.isArray(v)) {
-		  			    	v = v.map(function(e) { return e.toString().trim();});
-		  			    }
-	                            	} else {
-	                            		if (typeof v == 'string') {
-	                                    	v = '\'' + v + '\'';
-	                                    }
-	                            	}
+                                       if (sql.sep) {
+                                                if (rule.type == 'datetime' && v.indexOf('SYSDATE')>-1) {
+                                                        if (typeof v === 'string') {
+                                                                v = '(' + v.trim()+ ')';
+                                                            }
+                                                                                    else if (Array.isArray(v)) {
+                                                                                        v = v.map(function(e) { return e.toString().trim();});
+                                                                                    }
+                                                } else {
+                                                            if (typeof v === 'string') {
+                                                                v = v.split(',').map(function(e) { return '\'' + e.trim()+ '\'';});
+                                                            }
+                                                                                    else if (Array.isArray(v)) {
+                                                                                        v = v.map(function(e) { return e.toString().trim();});
+                                                                                    }
+                                                }
+                                        } else {
+                                                if (rule.type == 'datetime' && v.indexOf('SYSDATE')>-1) {
+                                                        if (typeof v === 'string') {
+                                                                v = '(' + v.trim()+ ')';
+                                                            }
+                                                } else
+                                                if (typeof v == 'string') {
+                                                v = '\'' + v + '\'';
+                                            }
+                                        }
                             	}
                                 /*if (typeof v == 'string') {
                                 	v = '\'' + v + '\'';
