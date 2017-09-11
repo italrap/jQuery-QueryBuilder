@@ -1,5 +1,5 @@
 /*!
- * jQuery QueryBuilder 2.5.0
+ * jQuery QueryBuilder 2.5.0.1
  * Copyright 2014-2017 Damien "Mistic" Sorel (http://www.strangeplanet.fr)
  * Licensed under MIT (http://opensource.org/licenses/MIT)
  */
@@ -1976,7 +1976,7 @@ QueryBuilder.prototype._validateValue = function(rule, value) {
     var result = true;
     var tmp, tempValue;
 
-    if (rule.operator.nb_inputs === 1) {
+    if (rule.operator.nb_inputs === 1 && !Array.isArray(value)) {
         value = [value];
     }
 
@@ -5858,7 +5858,7 @@ QueryBuilder.extend(/** @lends module:plugins.UniqueFilter.prototype */ {
 
 
 /*!
- * jQuery QueryBuilder 2.5.0
+ * jQuery QueryBuilder 2.5.0.1
  * Locale: English (en)
  * Author: Damien "Mistic" Sorel, http://www.strangeplanet.fr
  * Licensed under MIT (http://opensource.org/licenses/MIT)

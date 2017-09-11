@@ -43,7 +43,7 @@ QueryBuilder.prototype._validateValue = function(rule, value) {
     var result = true;
     var tmp, tempValue;
 
-    if (rule.operator.nb_inputs === 1) {
+    if (rule.operator.nb_inputs === 1 && !Array.isArray(value)) {
         value = [value];
     }
 
