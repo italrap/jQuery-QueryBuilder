@@ -5417,10 +5417,10 @@ QueryBuilder.extend(/** @lends module:plugins.SqlSupport.prototype */ {
                                                                                     }
                                                 } else {
                                                             if (typeof v === 'string') {
-                                                                v = v.split(',').map(function(e) { return '\'' + e.trim()+ '\'';});
+                                                                v = v.split(',').map(function(e) { return 'TO_TIMESTAMP(\'' + e + '\', \'YYYY-MM-DD HH24:MI:SS\')';});
                                                             }
                                                                                     else if (Array.isArray(v)) {
-                                                                                        v = v.map(function(e) { return e.toString().trim();});
+                                                                                        v = v.map(function(e) { return 'TO_TIMESTAMP(\'' + e.toString().trim()  + '\', \'YYYY-MM-DD HH24:MI:SS\')' ;});
                                                                                     }
                                                 }
                                         } else {
@@ -5430,7 +5430,7 @@ QueryBuilder.extend(/** @lends module:plugins.SqlSupport.prototype */ {
                                                             }
                                                 } else
                                                 if (typeof v == 'string') {
-                                                v = '\'' + v + '\'';
+                                                v = 'TO_TIMESTAMP(\'' + v + '\', \'YYYY-MM-DD HH24:MI:SS\')';
                                             }
                                         }
                             	}
