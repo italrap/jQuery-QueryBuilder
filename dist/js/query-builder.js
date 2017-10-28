@@ -1,5 +1,5 @@
 /*!
- * jQuery QueryBuilder 2.5.1.1
+ * jQuery QueryBuilder 2.5.3
  * Copyright 2014-2017 Damien "Mistic" Sorel (http://www.strangeplanet.fr)
  * Licensed under MIT (http://opensource.org/licenses/MIT)
  */
@@ -5408,31 +5408,48 @@ QueryBuilder.extend(/** @lends module:plugins.SqlSupport.prototype */ {
 	                            	}
                             	} else {
                                        if (sql.sep) {
-                                                if (rule.type == 'datetime' && v.indexOf('SYSDATE')>-1) {
-                                                        if (typeof v === 'string') {
-                                                                v = '(' + v.trim()+ ')';
-                                                            }
-                                                                                    else if (Array.isArray(v)) {
-                                                                                        v = v.map(function(e) { return e.toString().trim();});
-                                                                                    }
-                                                } else {
-                                                            if (typeof v === 'string') {
-                                                                v = v.split(',').map(function(e) { return 'TO_TIMESTAMP(\'' + e + '\', \'YYYY-MM-DD HH24:MI:SS\')';});
-                                                            }
-                                                                                    else if (Array.isArray(v)) {
-                                                                                        v = v.map(function(e) { return 'TO_TIMESTAMP(\'' + e.toString().trim()  + '\', \'YYYY-MM-DD HH24:MI:SS\')' ;});
-                                                                                    }
-                                                }
-                                        } else {
-                                                if (rule.type == 'datetime' && v.indexOf('SYSDATE')>-1) {
-                                                        if (typeof v === 'string') {
-                                                                v = '(' + v.trim()+ ')';
-                                                            }
-                                                } else
-                                                if (typeof v == 'string') {
-                                                v = 'TO_TIMESTAMP(\'' + v + '\', \'YYYY-MM-DD HH24:MI:SS\')';
-                                            }
-                                        }
+					if (rule.type != 'datetime') {
+						if (typeof v === 'string') {
+							v = v.split(',').map(function(e) { return  '\''+ e.trim() + '\'';});
+						}
+						else if (Array.isArray(v)) {
+							v = v.map(function(e) { return e.toString().trim();});
+						}
+					} else {
+						if (v.indexOf('SYSDATE')>-1) {
+							if (typeof v === 'string') {
+								v = '(' + v.trim()+ ')';
+							}
+							else if (Array.isArray(v)) {
+								v = v.map(function(e) { return e.toString().trim();});
+							}
+						} else {
+							if (typeof v === 'string') {
+								v = v.split(',').map(function(e) { return 'TO_TIMESTAMP(\'' + e + '\', \'YYYY-MM-DD HH24:MI:SS\')';});
+							}
+							else if (Array.isArray(v)) {
+								v = v.map(function(e) { return 'TO_TIMESTAMP(\'' + e.toString().trim()  + '\', \'YYYY-MM-DD HH24:MI:SS\')' ;});
+							}
+						}
+					}
+                                      } else {
+					if (rule.type == 'datetime') {
+						if (v.indexOf('SYSDATE')>-1) {
+							if (typeof v === 'string') {
+								v = '(' + v.trim()+ ')';
+							}
+						} else {
+							if (typeof v == 'string') {
+								v = 'TO_TIMESTAMP(\'' + v + '\', \'YYYY-MM-DD HH24:MI:SS\')';
+							}
+						}
+					} else {
+						if (typeof v == 'string') {
+							v = '\'' + v + '\'';
+					    	}
+					}
+                                                
+                                     }
                             	}
                                 /*if (typeof v == 'string') {
                                 	v = '\'' + v + '\'';
@@ -5455,7 +5472,9 @@ QueryBuilder.extend(/** @lends module:plugins.SqlSupport.prototype */ {
                      * @returns {string}
                      */
                     var field = self.change('getSQLField', rule.field, rule);
-
+		    if (sql.ic) {
+			field = "LOWER("+field+")";
+		    }
                     var ruleExpression = field + ' ' + sqlFn(value);
 
                     /**
@@ -5872,7 +5891,7 @@ QueryBuilder.extend(/** @lends module:plugins.UniqueFilter.prototype */ {
 
 
 /*!
- * jQuery QueryBuilder 2.5.1.1
+ * jQuery QueryBuilder 2.5.3
  * Locale: English (en)
  * Author: Damien "Mistic" Sorel, http://www.strangeplanet.fr
  * Licensed under MIT (http://opensource.org/licenses/MIT)
