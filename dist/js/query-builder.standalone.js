@@ -1,281 +1,4 @@
 /*!
- * jQuery.extendext 0.1.2
- *
- * Copyright 2014-2016 Damien "Mistic" Sorel (http://www.strangeplanet.fr)
- * Licensed under MIT (http://opensource.org/licenses/MIT)
- * 
- * Based on jQuery.extend by jQuery Foundation, Inc. and other contributors
- */
-
-(function (root, factory) {
-    if (typeof define === 'function' && define.amd) {
-        define('jQuery.extendext', ['jquery'], factory);
-    }
-    else if (typeof module === 'object' && module.exports) {
-        module.exports = factory(require('jquery'));
-    }
-    else {
-        factory(root.jQuery);
-    }
-}(this, function ($) {
-    "use strict";
-
-    $.extendext = function () {
-        var options, name, src, copy, copyIsArray, clone,
-            target = arguments[0] || {},
-            i = 1,
-            length = arguments.length,
-            deep = false,
-            arrayMode = 'default';
-
-        // Handle a deep copy situation
-        if (typeof target === "boolean") {
-            deep = target;
-
-            // Skip the boolean and the target
-            target = arguments[i++] || {};
-        }
-
-        // Handle array mode parameter
-        if (typeof target === "string") {
-            arrayMode = target.toLowerCase();
-            if (arrayMode !== 'concat' && arrayMode !== 'replace' && arrayMode !== 'extend') {
-                arrayMode = 'default';
-            }
-
-            // Skip the string param
-            target = arguments[i++] || {};
-        }
-
-        // Handle case when target is a string or something (possible in deep copy)
-        if (typeof target !== "object" && !$.isFunction(target)) {
-            target = {};
-        }
-
-        // Extend jQuery itself if only one argument is passed
-        if (i === length) {
-            target = this;
-            i--;
-        }
-
-        for (; i < length; i++) {
-            // Only deal with non-null/undefined values
-            if ((options = arguments[i]) !== null) {
-                // Special operations for arrays
-                if ($.isArray(options) && arrayMode !== 'default') {
-                    clone = target && $.isArray(target) ? target : [];
-
-                    switch (arrayMode) {
-                    case 'concat':
-                        target = clone.concat($.extend(deep, [], options));
-                        break;
-
-                    case 'replace':
-                        target = $.extend(deep, [], options);
-                        break;
-
-                    case 'extend':
-                        options.forEach(function (e, i) {
-                            if (typeof e === 'object') {
-                                var type = $.isArray(e) ? [] : {};
-                                clone[i] = $.extendext(deep, arrayMode, clone[i] || type, e);
-
-                            } else if (clone.indexOf(e) === -1) {
-                                clone.push(e);
-                            }
-                        });
-
-                        target = clone;
-                        break;
-                    }
-
-                } else {
-                    // Extend the base object
-                    for (name in options) {
-                        src = target[name];
-                        copy = options[name];
-
-                        // Prevent never-ending loop
-                        if (target === copy) {
-                            continue;
-                        }
-
-                        // Recurse if we're merging plain objects or arrays
-                        if (deep && copy && ( $.isPlainObject(copy) ||
-                            (copyIsArray = $.isArray(copy)) )) {
-
-                            if (copyIsArray) {
-                                copyIsArray = false;
-                                clone = src && $.isArray(src) ? src : [];
-
-                            } else {
-                                clone = src && $.isPlainObject(src) ? src : {};
-                            }
-
-                            // Never move original objects, clone them
-                            target[name] = $.extendext(deep, arrayMode, clone, copy);
-
-                            // Don't bring in undefined values
-                        } else if (copy !== undefined) {
-                            target[name] = copy;
-                        }
-                    }
-                }
-            }
-        }
-
-        // Return the modified object
-        return target;
-    };
-}));
-
-// doT.js
-// 2011-2014, Laura Doktorova, https://github.com/olado/doT
-// Licensed under the MIT license.
-
-(function () {
-	"use strict";
-
-	var doT = {
-		name: "doT",
-		version: "1.1.1",
-		templateSettings: {
-			evaluate:    /\{\{([\s\S]+?(\}?)+)\}\}/g,
-			interpolate: /\{\{=([\s\S]+?)\}\}/g,
-			encode:      /\{\{!([\s\S]+?)\}\}/g,
-			use:         /\{\{#([\s\S]+?)\}\}/g,
-			useParams:   /(^|[^\w$])def(?:\.|\[[\'\"])([\w$\.]+)(?:[\'\"]\])?\s*\:\s*([\w$\.]+|\"[^\"]+\"|\'[^\']+\'|\{[^\}]+\})/g,
-			define:      /\{\{##\s*([\w\.$]+)\s*(\:|=)([\s\S]+?)#\}\}/g,
-			defineParams:/^\s*([\w$]+):([\s\S]+)/,
-			conditional: /\{\{\?(\?)?\s*([\s\S]*?)\s*\}\}/g,
-			iterate:     /\{\{~\s*(?:\}\}|([\s\S]+?)\s*\:\s*([\w$]+)\s*(?:\:\s*([\w$]+))?\s*\}\})/g,
-			varname:	"it",
-			strip:		true,
-			append:		true,
-			selfcontained: false,
-			doNotSkipEncoded: false
-		},
-		template: undefined, //fn, compile template
-		compile:  undefined, //fn, for express
-		log: true
-	}, _globals;
-
-	doT.encodeHTMLSource = function(doNotSkipEncoded) {
-		var encodeHTMLRules = { "&": "&#38;", "<": "&#60;", ">": "&#62;", '"': "&#34;", "'": "&#39;", "/": "&#47;" },
-			matchHTML = doNotSkipEncoded ? /[&<>"'\/]/g : /&(?!#?\w+;)|<|>|"|'|\//g;
-		return function(code) {
-			return code ? code.toString().replace(matchHTML, function(m) {return encodeHTMLRules[m] || m;}) : "";
-		};
-	};
-
-	_globals = (function(){ return this || (0,eval)("this"); }());
-
-	/* istanbul ignore else */
-	if (typeof module !== "undefined" && module.exports) {
-		module.exports = doT;
-	} else if (typeof define === "function" && define.amd) {
-		define('doT', function(){return doT;});
-	} else {
-		_globals.doT = doT;
-	}
-
-	var startend = {
-		append: { start: "'+(",      end: ")+'",      startencode: "'+encodeHTML(" },
-		split:  { start: "';out+=(", end: ");out+='", startencode: "';out+=encodeHTML(" }
-	}, skip = /$^/;
-
-	function resolveDefs(c, block, def) {
-		return ((typeof block === "string") ? block : block.toString())
-		.replace(c.define || skip, function(m, code, assign, value) {
-			if (code.indexOf("def.") === 0) {
-				code = code.substring(4);
-			}
-			if (!(code in def)) {
-				if (assign === ":") {
-					if (c.defineParams) value.replace(c.defineParams, function(m, param, v) {
-						def[code] = {arg: param, text: v};
-					});
-					if (!(code in def)) def[code]= value;
-				} else {
-					new Function("def", "def['"+code+"']=" + value)(def);
-				}
-			}
-			return "";
-		})
-		.replace(c.use || skip, function(m, code) {
-			if (c.useParams) code = code.replace(c.useParams, function(m, s, d, param) {
-				if (def[d] && def[d].arg && param) {
-					var rw = (d+":"+param).replace(/'|\\/g, "_");
-					def.__exp = def.__exp || {};
-					def.__exp[rw] = def[d].text.replace(new RegExp("(^|[^\\w$])" + def[d].arg + "([^\\w$])", "g"), "$1" + param + "$2");
-					return s + "def.__exp['"+rw+"']";
-				}
-			});
-			var v = new Function("def", "return " + code)(def);
-			return v ? resolveDefs(c, v, def) : v;
-		});
-	}
-
-	function unescape(code) {
-		return code.replace(/\\('|\\)/g, "$1").replace(/[\r\t\n]/g, " ");
-	}
-
-	doT.template = function(tmpl, c, def) {
-		c = c || doT.templateSettings;
-		var cse = c.append ? startend.append : startend.split, needhtmlencode, sid = 0, indv,
-			str  = (c.use || c.define) ? resolveDefs(c, tmpl, def || {}) : tmpl;
-
-		str = ("var out='" + (c.strip ? str.replace(/(^|\r|\n)\t* +| +\t*(\r|\n|$)/g," ")
-					.replace(/\r|\n|\t|\/\*[\s\S]*?\*\//g,""): str)
-			.replace(/'|\\/g, "\\$&")
-			.replace(c.interpolate || skip, function(m, code) {
-				return cse.start + unescape(code) + cse.end;
-			})
-			.replace(c.encode || skip, function(m, code) {
-				needhtmlencode = true;
-				return cse.startencode + unescape(code) + cse.end;
-			})
-			.replace(c.conditional || skip, function(m, elsecase, code) {
-				return elsecase ?
-					(code ? "';}else if(" + unescape(code) + "){out+='" : "';}else{out+='") :
-					(code ? "';if(" + unescape(code) + "){out+='" : "';}out+='");
-			})
-			.replace(c.iterate || skip, function(m, iterate, vname, iname) {
-				if (!iterate) return "';} } out+='";
-				sid+=1; indv=iname || "i"+sid; iterate=unescape(iterate);
-				return "';var arr"+sid+"="+iterate+";if(arr"+sid+"){var "+vname+","+indv+"=-1,l"+sid+"=arr"+sid+".length-1;while("+indv+"<l"+sid+"){"
-					+vname+"=arr"+sid+"["+indv+"+=1];out+='";
-			})
-			.replace(c.evaluate || skip, function(m, code) {
-				return "';" + unescape(code) + "out+='";
-			})
-			+ "';return out;")
-			.replace(/\n/g, "\\n").replace(/\t/g, '\\t').replace(/\r/g, "\\r")
-			.replace(/(\s|;|\}|^|\{)out\+='';/g, '$1').replace(/\+''/g, "");
-			//.replace(/(\s|;|\}|^|\{)out\+=''\+/g,'$1out+=');
-
-		if (needhtmlencode) {
-			if (!c.selfcontained && _globals && !_globals._encodeHTML) _globals._encodeHTML = doT.encodeHTMLSource(c.doNotSkipEncoded);
-			str = "var encodeHTML = typeof _encodeHTML !== 'undefined' ? _encodeHTML : ("
-				+ doT.encodeHTMLSource.toString() + "(" + (c.doNotSkipEncoded || '') + "));"
-				+ str;
-		}
-		try {
-			return new Function(c.varname, str);
-		} catch (e) {
-			/* istanbul ignore else */
-			if (typeof console !== "undefined") console.log("Could not create a template function: " + str);
-			throw e;
-		}
-	};
-
-	doT.compile = function(tmpl, def) {
-		return doT.template(tmpl, null, def);
-	};
-}());
-
-
-/*!
  * jQuery QueryBuilder 2.5.3
  * Copyright 2014-2017 Damien "Mistic" Sorel (http://www.strangeplanet.fr)
  * Licensed under MIT (http://opensource.org/licenses/MIT)
@@ -4305,6 +4028,120 @@ QueryBuilder.extend(/** @lends module:plugins.ChangeFilters.prototype */ {
         });
 
         this.setFilters(deleteOrphans, filters);
+    }
+});
+
+
+/**
+ * @class Collapse Groups
+ * @memberof module:plugins
+ * @description Allows each rules group to be collapsed.
+ * @param {object} [options]
+ * @param {string} [options.iconUp='glyphicon glyphicon-chevron-up']
+ * @param {string} [options.iconDown='glyphicon glyphicon-chevron-down']
+ */
+QueryBuilder.define('collapse-groups', function(options) {
+    var self = this;
+    var Selectors = QueryBuilder.selectors;
+
+    // Bind events
+    this.on('afterInit', function() {
+        self.$el.on('click.queryBuilder', '[data-collapse=group]', function() {
+            var $group = $(this).closest(Selectors.group_container);
+            self.collapse($(this), options);
+            self.toggleCollapseValue($(this));
+        });
+
+        self.$el.on('change.queryBuilder', '.group-name', function() {
+            self.setGroupName($(this));
+        });
+    });
+
+    // Collapse any groups that were saved as collapsed
+    this.on('afterSetRules', function() {
+        $.each($(Selectors.group_container), function(i, el) {
+            var group = self.getModel($(el));
+            if (group.collapsed) {
+                self.collapse($(el).find('[data-collapse="group"]'), options);
+            }
+            if (group.name) {
+                $(el).find('.group-name').val(group.name);
+            }
+        });
+    });
+
+    // Modify templates
+    this.on('getGroupTemplate.filter', function(h, level) {
+        var $h = $(h.value);
+        $h.find(Selectors.group_header)
+          .append('<button type="button" class="btn btn-xs btn-default" data-collapse="group"><i class="' +
+                   options.iconUp + '"></i> ' + self.translate('collapse') + '</button>');
+        h.value = $h.prop('outerHTML');
+    });
+    if (options.namedGroups) {
+        this.on('getGroupTemplate.filter', function(h, level) {
+            var $h = $(h.value);
+            $h.find(Selectors.group_header).append('<input type="text" maxlength="32" class="group-name">');
+            h.value = $h.prop('outerHTML');
+        });
+    }
+
+    // Export "collapse" and "name" to JSON
+    this.on('groupToJson.filter', function(e, group) {
+        e.value.collapsed = group.collapsed;
+        e.value.name = group.name;
+    });
+
+    // Import "collapse" and "name" from JSON
+    this.on('jsonToGroup.filter', function(e, json) {
+        e.value.collapsed = json.collapsed;
+        e.value.name = json.name;
+    });
+
+}, {
+    iconUp: 'glyphicon glyphicon-chevron-up',
+    iconDown: 'glyphicon glyphicon-chevron-down',
+    namedGroups: true
+});
+
+/**
+ * From {@link module:plugins.Collapse}
+ * @name name, collapsed
+ * @member {string}, {boolean}
+ * @memberof Group
+ * @instance
+ */
+Utils.defineModelProperties(Group, ['name', 'collapsed']);
+
+QueryBuilder.extend({
+    /**
+     * Collapse a group into it's header
+     * @param {jQuery Element} [$el]
+     * @param {object} [options] {@link module:plugins.Collapse}
+     */
+    collapse: function($el, options) {
+        var self = this;
+        var selectors = QueryBuilder.selectors;
+        var $iconEl = $el.find('i');
+
+        $el.closest(selectors.group_container).find(selectors.rules_list).slideToggle('fast');
+        $iconEl.toggleClass(options.iconUp).toggleClass(options.iconDown);
+    },
+
+    toggleCollapseValue: function($el) {
+        var group = this.getModel($el.closest(QueryBuilder.selectors.group_container));
+        group.collapsed = !(!!group.collapsed);
+    },
+
+    /**
+     * Save the entered group name on the group object
+     * @param {jQuery Element} [$el]
+     */
+    setGroupName: function($el) {
+        var name = $el.val();
+        var selectors = QueryBuilder.selectors;
+        var group = this.getModel($el.closest(selectors.group_container));
+        group.name = name;
     }
 });
 
