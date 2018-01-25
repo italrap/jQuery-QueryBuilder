@@ -1,6 +1,6 @@
 {
   "name": "jQuery-QueryBuilder-Custom",
-  "version": "2.5.3",
+  "version": "2.5.5",
   "author": {
     "name": "Damien \"Mistic\" Sorel",
     "email": "contact@git.strangeplanet.fr",
@@ -9,16 +9,17 @@
   "description": "jQuery plugin for user friendly query/filter creator",
   "main": "dist/js/query-builder.js",
   "dependencies": {
-    "jquery": ">=1.9.0",
     "bootstrap": ">=3.1.0 <4",
-    "moment": ">=2.6.0",
+    "dot": ">=1.0.3",
+    "grunt-cli": "^1.2.0",
+    "jquery": ">=1.9.0",
     "jquery-extendext": ">=0.1.2",
-    "dot": ">=1.0.3"
+    "moment": ">=2.6.0"
   },
   "devDependencies": {
     "deepmerge": "^0.2.0",
     "foodoc": "^0.0.8",
-    "grunt": "^1.0.0",
+    "grunt": "^1.0.1",
     "grunt-banner": "^0.6.0",
     "grunt-contrib-clean": "^1.0.0",
     "grunt-contrib-concat": "^1.0.0",

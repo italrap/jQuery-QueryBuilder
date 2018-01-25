@@ -137,6 +137,7 @@ Utils.escapeString = function(value) {
             case '\n': return '\\n';
             case '\r': return '\\r';
             case '\b': return '\\b';
+            case '\'': return "''";
             default:   return '\\' + s;
             // @formatter:off
             }

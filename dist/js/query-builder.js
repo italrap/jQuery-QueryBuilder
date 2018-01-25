@@ -1,6 +1,6 @@
 /*!
- * jQuery QueryBuilder 2.5.3
- * Copyright 2014-2017 Damien "Mistic" Sorel (http://www.strangeplanet.fr)
+ * jQuery QueryBuilder 2.5.5
+ * Copyright 2014-2018 Damien "Mistic" Sorel (http://www.strangeplanet.fr)
  * Licensed under MIT (http://opensource.org/licenses/MIT)
  */
 /**
@@ -2995,6 +2995,7 @@ Utils.escapeString = function(value) {
             case '\n': return '\\n';
             case '\r': return '\\r';
             case '\b': return '\\b';
+            case '\'': return "''";
             default:   return '\\' + s;
             // @formatter:off
             }
@@ -5891,7 +5892,7 @@ QueryBuilder.extend(/** @lends module:plugins.UniqueFilter.prototype */ {
 
 
 /*!
- * jQuery QueryBuilder 2.5.3
+ * jQuery QueryBuilder 2.5.5
  * Locale: English (en)
  * Author: Damien "Mistic" Sorel, http://www.strangeplanet.fr
  * Licensed under MIT (http://opensource.org/licenses/MIT)
