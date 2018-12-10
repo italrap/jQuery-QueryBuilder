@@ -31,17 +31,17 @@ QueryBuilder.defaults({
     },
 
     mongoRuleOperators: {
+        $eq: function(v) {
+            return {
+                'val': v,
+                'op': v === null ? 'is_null' : (v === '' ? 'is_empty' : 'equal')
+            };
+        },
         $ne: function(v) {
             v = v.$ne;
             return {
                 'val': v,
                 'op': v === null ? 'is_not_null' : (v === '' ? 'is_not_empty' : 'not_equal')
-            };
-        },
-        eq: function(v) {
-            return {
-                'val': v,
-                'op': v === null ? 'is_null' : (v === '' ? 'is_empty' : 'equal')
             };
         },
         $regex: function(v) {
@@ -105,6 +105,10 @@ QueryBuilder.extend(/** @lends module:plugins.MongoDbSupport.prototype */ {
     getMongo: function(data) {
         data = (data === undefined) ? this.getRules() : data;
 
+        if (!data) {
+            return null;
+        }
+
         var self = this;
 
         return (function parse(group) {
@@ -128,7 +132,6 @@ QueryBuilder.extend(/** @lends module:plugins.MongoDbSupport.prototype */ {
                 else {
                     var mdb = self.settings.mongoOperators[rule.operator];
                     var ope = self.getOperatorByType(rule.operator);
-                    var values = [];
 
                     if (mdb === undefined) {
                         Utils.error('UndefinedMongoOperator', 'Unknown MongoDB operation for operator "{0}"', rule.operator);
@@ -138,10 +141,6 @@ QueryBuilder.extend(/** @lends module:plugins.MongoDbSupport.prototype */ {
                         if (!(rule.value instanceof Array)) {
                             rule.value = [rule.value];
                         }
-
-                        rule.value.forEach(function(v) {
-                            values.push(Utils.changeType(v, rule.type, false));
-                        });
                     }
 
                     /**
@@ -155,7 +154,7 @@ QueryBuilder.extend(/** @lends module:plugins.MongoDbSupport.prototype */ {
                     var field = self.change('getMongoDBField', rule.field, rule);
 
                     var ruleExpression = {};
-                    ruleExpression[field] = mdb.call(self, values);
+                    ruleExpression[field] = mdb.call(self, rule.value);
 
                     /**
                      * Modifies the MongoDB expression generated for a rul
@@ -167,7 +166,7 @@ QueryBuilder.extend(/** @lends module:plugins.MongoDbSupport.prototype */ {
                      * @param {function} valueWrapper - function that takes the value and adds the operator
                      * @returns {object}
                      */
-                    parts.push(self.change('ruleToMongo', ruleExpression, rule, values, mdb));
+                    parts.push(self.change('ruleToMongo', ruleExpression, rule, rule.value, mdb));
                 }
             });
 
@@ -225,7 +224,7 @@ QueryBuilder.extend(/** @lends module:plugins.MongoDbSupport.prototype */ {
             };
         }
 
-        var key = andOr(query);
+        var key = self.getMongoCondition(query);
         if (!key) {
             Utils.error('MongoParse', 'Invalid MongoDB query format');
         }
@@ -250,7 +249,7 @@ QueryBuilder.extend(/** @lends module:plugins.MongoDbSupport.prototype */ {
                     return;
                 }
 
-                var key = andOr(data);
+                var key = self.getMongoCondition(data);
                 if (key) {
                     parts.push(parse(data, key));
                 }
@@ -258,7 +257,7 @@ QueryBuilder.extend(/** @lends module:plugins.MongoDbSupport.prototype */ {
                     var field = Object.keys(data)[0];
                     var value = data[field];
 
-                    var operator = determineMongoOperator(value, field);
+                    var operator = self.getMongoOperator(value);
                     if (operator === undefined) {
                         Utils.error('MongoParse', 'Invalid MongoDB query format');
                     }
@@ -345,58 +344,50 @@ QueryBuilder.extend(/** @lends module:plugins.MongoDbSupport.prototype */ {
         }
 
         return id;
-    }
-});
+    },
 
-/**
- * Finds which operator is used in a MongoDB sub-object
- * @memberof module:plugins.MongoDbSupport
- * @param {*} value
- * @returns {string|undefined}
- * @private
- */
-function determineMongoOperator(value) {
-    if (value !== null && typeof value == 'object') {
-        var subkeys = Object.keys(value);
-
-        if (subkeys.length === 1) {
-            return subkeys[0];
-        }
-        else {
-            if (value.$gte !== undefined && value.$lte !== undefined) {
+    /**
+     * Finds which operator is used in a MongoDB sub-object
+     * @param {*} data
+     * @returns {string|undefined}
+     * @private
+     */
+    getMongoOperator: function(data) {
+        if (data !== null && typeof data === 'object') {
+            if (data.$gte !== undefined && data.$lte !== undefined) {
                 return 'between';
             }
-            if (value.$lt !== undefined && value.$gt !== undefined) {
+            if (data.$lt !== undefined && data.$gt !== undefined) {
                 return 'not_between';
             }
-            else if (value.$regex !== undefined) { // optional $options
-                return '$regex';
+
+            var knownKeys = Object.keys(data).filter(function(key) {
+                return !!this.settings.mongoRuleOperators[key];
+            }.bind(this));
+
+            if (knownKeys.length === 1) {
+                return knownKeys[0];
             }
-            else {
-                return;
+        }
+        else {
+            return '$eq';
+        }
+    },
+
+
+    /**
+     * Returns the key corresponding to "$or" or "$and"
+     * @param {object} data
+     * @returns {string|undefined}
+     * @private
+     */
+    getMongoCondition: function(data) {
+        var keys = Object.keys(data);
+
+        for (var i = 0, l = keys.length; i < l; i++) {
+            if (keys[i].toLowerCase() === '$or' || keys[i].toLowerCase() === '$and') {
+                return keys[i];
             }
         }
     }
-    else {
-        return 'eq';
-    }
-}
-
-/**
- * Returns the key corresponding to "$or" or "$and"
- * @memberof module:plugins.MongoDbSupport
- * @param {object} data
- * @returns {string}
- * @private
- */
-function andOr(data) {
-    var keys = Object.keys(data);
-
-    for (var i = 0, l = keys.length; i < l; i++) {
-        if (keys[i].toLowerCase() == '$or' || keys[i].toLowerCase() == '$and') {
-            return keys[i];
-        }
-    }
-
-    return undefined;
-}
+});

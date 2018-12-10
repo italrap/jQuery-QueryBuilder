@@ -248,10 +248,17 @@ QueryBuilder.extend(/** @lends module:plugins.SqlSupport.prototype */ {
      */
     getSQL: function(stmt, nl, data) {
         data = (data === undefined) ? this.getRules() : data;
+
+        if (!data) {
+            return null;
+        }
+
         nl = !!nl ? '\n' : ' ';
         var boolean_as_integer = this.getPluginOptions('sql-support', 'boolean_as_integer');
 
-        if (stmt === true) stmt = 'question_mark';
+        if (stmt === true) {
+            stmt = 'question_mark';
+        }
         if (typeof stmt == 'string') {
             var config = getStmtConfig(stmt);
             stmt = this.settings.sqlStatements[config[1]](config[2]);
@@ -379,7 +386,9 @@ QueryBuilder.extend(/** @lends module:plugins.SqlSupport.prototype */ {
                     }
 
                     var sqlFn = function(v) {
-                        return sql.op.replace(/\?/, v);
+                        return sql.op.replace('?', function() {
+                            return v;
+                        });
                     };
 
                     /**
@@ -510,6 +519,10 @@ QueryBuilder.extend(/** @lends module:plugins.SqlSupport.prototype */ {
         var curr = out;
 
         (function flatten(data, i) {
+            if (data === null) {
+                return;
+            }
+
             // allow plugins to manually parse or handle special cases
             data = self.change('parseSQLNode', data);
 
@@ -533,7 +546,20 @@ QueryBuilder.extend(/** @lends module:plugins.SqlSupport.prototype */ {
             // it's a node
             if (['AND', 'OR'].indexOf(data.operation.toUpperCase()) !== -1) {
                 // create a sub-group if the condition is not the same and it's not the first level
-                if (i > 0 && curr.condition != data.operation.toUpperCase()) {
+
+                /**
+                 * Given an existing group and an AST node, determines if a sub-group must be created
+                 * @event changer:sqlGroupsDistinct
+                 * @memberof module:plugins.SqlSupport
+                 * @param {boolean} create - true by default if the group condition is different
+                 * @param {object} group
+                 * @param {object} AST
+                 * @param {int} current group level
+                 * @returns {boolean}
+                 */
+                var createGroup = self.change('sqlGroupsDistinct', i > 0 && curr.condition != data.operation.toUpperCase(), curr, data, i);
+
+                if (createGroup) {
                     /**
                      * Modifies the group generated from the SQL expression (this is called before the group is filled with rules)
                      * @event changer:sqlToGroup
