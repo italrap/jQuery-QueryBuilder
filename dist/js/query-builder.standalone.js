@@ -276,7 +276,7 @@
 
 
 /*!
- * jQuery QueryBuilder 2.5.2
+ * jQuery QueryBuilder 2.5.2.6
  * Copyright 2014-2018 Damien "Mistic" Sorel (http://www.strangeplanet.fr)
  * Licensed under MIT (https://opensource.org/licenses/MIT)
  */
@@ -4625,6 +4625,10 @@ QueryBuilder.extend({
         var $iconEl = $el.find('i');
 
         $el.closest(selectors.group_container).find(selectors.rules_list).slideToggle('fast');
+        $el.parent().parent().find(selectors.group_condition).parent().parent().toggleClass("collapsed");
+        $el.parent().parent().find(selectors.add_rule).toggleClass("collapsed");
+        $el.parent().parent().find(selectors.add_group).toggleClass("collapsed");
+        
         $iconEl.toggleClass(options.iconUp).toggleClass(options.iconDown);
     },
 
@@ -6578,7 +6582,7 @@ QueryBuilder.extend(/** @lends module:plugins.UniqueFilter.prototype */ {
 
 
 /*!
- * jQuery QueryBuilder 2.5.2
+ * jQuery QueryBuilder 2.5.2.6
  * Locale: English (en)
  * Author: Damien "Mistic" Sorel, http://www.strangeplanet.fr
  * Licensed under MIT (https://opensource.org/licenses/MIT)
