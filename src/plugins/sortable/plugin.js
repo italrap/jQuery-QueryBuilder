@@ -29,6 +29,8 @@ QueryBuilder.define('sortable', function(options) {
     var src;
     var moved;
 
+    var autoScrollContainer = options.autoScrollContainer || this.$el[0];
+    var autoScrollContainerIsExternal = autoScrollContainer!==this.$el[0];
     // Init drag and drop
     this.on('afterAddRule afterAddGroup', function(e, node) {
         if (node == placeholder) {
@@ -50,6 +52,8 @@ QueryBuilder.define('sortable', function(options) {
             interact(node.$el[0])
                 .draggable({
                     allowFrom: QueryBuilder.selectors.drag_handle,
+                    autoScroll: {container: autoScrollContainer},
+                    // autoScroll: true,
                     onstart: function(event) {
                         moved = false;
 
@@ -60,7 +64,9 @@ QueryBuilder.define('sortable', function(options) {
                         ghost = src.$el.clone()
                             .appendTo(src.$el.parent())
                             .width(src.$el.outerWidth())
-                            .addClass('dragging');
+                            .addClass('dragging')
+                            .css('position','fixed')
+                            ;
 
                         // create drop placeholder
                         var ph = $('<div class="rule-placeholder">&nbsp;</div>')
@@ -73,8 +79,21 @@ QueryBuilder.define('sortable', function(options) {
                     },
                     onmove: function(event) {
                         // make the ghost follow the cursor
-                        ghost[0].style.top = event.clientY - 15 + 'px';
-                        ghost[0].style.left = event.clientX - 15 + 'px';
+                        if (ghost && ghost[0]){
+
+                            var x= event.clientX - 15, 
+                            y= event.clientY - 15;
+                            
+                            if(autoScrollContainerIsExternal){
+                                y += autoScrollContainer.scrollTop;
+                                x += autoScrollContainer.scrollLeft;
+                            }
+                            ghost[0].style.top = y + 'px';
+                            ghost[0].style.left = x + 'px';
+                        }
+                        // console.log('top:' + ghost[0].style.top + ' clientY:' + event.clientY + ' clientY0:' + event.clientY0 + ' pageY:'+event.pageY);
+                        // console.dir(event.target);
+                        // console.dir(autoScrollContainer);
                     },
                     onend: function(event) {
                         // starting from Interact 1.3.3, onend is called before ondrop
@@ -82,9 +101,9 @@ QueryBuilder.define('sortable', function(options) {
                             moveSortableToTarget(src, $(event.relatedTarget), self);
                             moved = true;
                         }
-
                         // remove ghost
-                        ghost.remove();
+                        if(ghost)
+                            ghost.remove();
                         ghost = undefined;
 
                         // remove placeholder
@@ -154,7 +173,7 @@ QueryBuilder.define('sortable', function(options) {
     // Remove drag handle from non-sortable items
     this.on('afterApplyRuleFlags afterApplyGroupFlags', function(e, node) {
         if (node.flags.no_sortable) {
-            node.$el.find('.drag-handle').remove();
+            node.$el.find(QueryBuilder.selectors.drag_handle).remove();
         }
     });
 
