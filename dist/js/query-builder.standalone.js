@@ -319,6 +319,7 @@
  * @param {object} options - see {@link http://querybuilder.js.org/#options}
  * @constructor
  */
+var SQLParser = window && window.SQLParser;
 var QueryBuilder = function($el, options) {
     $el[0].queryBuilder = this;
 
