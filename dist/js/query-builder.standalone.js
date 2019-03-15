@@ -276,21 +276,30 @@
 
 
 /*!
- * jQuery QueryBuilder 2.5.2.7
+ * jQuery QueryBuilder 2.5.3
  * Copyright 2014-2019 Damien "Mistic" Sorel (http://www.strangeplanet.fr)
  * Licensed under MIT (https://opensource.org/licenses/MIT)
  */
 (function(root, factory) {
     if (typeof define == 'function' && define.amd) {
-        define('query-builder', ['jquery', 'dot/doT', 'jquery-extendext'], factory);
+        define('query-builder', ['jquery', 'dot/doT', 'jquery-extendext', window], factory);
     }
     else if (typeof module === 'object' && module.exports) {
-        module.exports = factory(require('jquery'), require('dot/doT'), require('jquery-extendext'));
+        if(root.document){
+            module.exports = factory(require('jquery'), require('dot/doT'), require('jquery-extendext'));
+        } else {
+            module.exports = function( $, window ) {
+				if ( !$ ) {
+					throw new Error( "jQuery QueryBuilder requires a jQuery Instance" );
+				}
+				return factory( $, require('dot/doT'), undefined, window);
+			};
+        }
     }
     else {
-        factory(root.jQuery, root.doT);
+        factory(root.jQuery, root.doT, undefined, window);
     }
-}(this, function($, doT) {
+}(this, function($, doT, ext, window) {
 "use strict";
 
 /**
@@ -6601,7 +6610,7 @@ QueryBuilder.extend(/** @lends module:plugins.UniqueFilter.prototype */ {
 
 
 /*!
- * jQuery QueryBuilder 2.5.2.7
+ * jQuery QueryBuilder 2.5.3
  * Locale: English (en)
  * Author: Damien "Mistic" Sorel, http://www.strangeplanet.fr
  * Licensed under MIT (https://opensource.org/licenses/MIT)

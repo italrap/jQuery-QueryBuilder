@@ -1,11 +1,15 @@
 {
-  "name": "jQuery-QueryBuilder-Custom",
-  "version": "2.5.2.7",
+  "name": "jQuery-QueryBuilder-Custom-ts",
+  "version": "2.5.3",
   "author": {
     "name": "Damien \"Mistic\" Sorel",
     "email": "contact@git.strangeplanet.fr",
     "url": "https://www.strangeplanet.fr"
   },
+  "contributors": [{
+    "name": "Luigi Parlati",
+    "email": "luigi.parlati@exprivia.com"
+  }],
   "description": "jQuery plugin for user friendly query/filter creator",
   "main": "dist/js/query-builder.js",
   "dependencies": {
