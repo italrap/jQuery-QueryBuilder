@@ -292,6 +292,13 @@ QueryBuilder.extend(/** @lends module:plugins.SqlSupport.prototype */ {
                     if (sql === undefined) {
                         Utils.error('UndefinedSQLOperator', 'Unknown SQL operation for operator "{0}"', rule.operator);
                     }
+                    var sqlFn;
+
+                    if (typeof sql.sqlFn == 'function' ){
+                        sqlFn = function(v) {
+                            return sql.sqlFn(rule.value);
+                        };
+                    } else {
 
                     if (ope.nb_inputs !== 0) {
                         if (!(rule.value instanceof Array)) {
@@ -385,12 +392,12 @@ QueryBuilder.extend(/** @lends module:plugins.SqlSupport.prototype */ {
                         });
                     }
 
-                    var sqlFn = function(v) {
+                    sqlFn = function(v) {
                         return sql.op.replace('?', function() {
                             return v;
                         });
                     };
-
+                    }
                     /**
                      * Modifies the SQL field used by a rule
                      * @event changer:getSQLField
