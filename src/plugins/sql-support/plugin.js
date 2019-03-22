@@ -334,8 +334,8 @@ QueryBuilder.extend(/** @lends module:plugins.SqlSupport.prototype */ {
 		  				    	v = v.map(function(e) { return e.toString().trim().toLowerCase();});
 		  			        }
 	                            	} else {
-	                            		v = v.toLowerCase();
 	                            		if (typeof v == 'string') {
+											v = v.toLowerCase();
 	                                    	v = '\'' + v + '\'';
 	                                    }
 	                            	}

@@ -276,7 +276,7 @@
 
 
 /*!
- * jQuery QueryBuilder 2.5.2.7
+ * jQuery QueryBuilder 2.5.2.8
  * Copyright 2014-2019 Damien "Mistic" Sorel (http://www.strangeplanet.fr)
  * Licensed under MIT (https://opensource.org/licenses/MIT)
  */
@@ -6057,6 +6057,13 @@ QueryBuilder.extend(/** @lends module:plugins.SqlSupport.prototype */ {
                     if (sql === undefined) {
                         Utils.error('UndefinedSQLOperator', 'Unknown SQL operation for operator "{0}"', rule.operator);
                     }
+                    var sqlFn;
+
+                    if (typeof sql.sqlFn == 'function' ){
+                        sqlFn = function(v) {
+                            return sql.sqlFn(rule.value);
+                        };
+                    } else {
 
                     if (ope.nb_inputs !== 0) {
                         if (!(rule.value instanceof Array)) {
@@ -6092,8 +6099,8 @@ QueryBuilder.extend(/** @lends module:plugins.SqlSupport.prototype */ {
 		  				    	v = v.map(function(e) { return e.toString().trim().toLowerCase();});
 		  			        }
 	                            	} else {
-	                            		v = v.toLowerCase();
 	                            		if (typeof v == 'string') {
+											v = v.toLowerCase();
 	                                    	v = '\'' + v + '\'';
 	                                    }
 	                            	}
@@ -6150,12 +6157,12 @@ QueryBuilder.extend(/** @lends module:plugins.SqlSupport.prototype */ {
                         });
                     }
 
-                    var sqlFn = function(v) {
+                    sqlFn = function(v) {
                         return sql.op.replace('?', function() {
                             return v;
                         });
                     };
-
+                    }
                     /**
                      * Modifies the SQL field used by a rule
                      * @event changer:getSQLField
@@ -6601,7 +6608,7 @@ QueryBuilder.extend(/** @lends module:plugins.UniqueFilter.prototype */ {
 
 
 /*!
- * jQuery QueryBuilder 2.5.2.7
+ * jQuery QueryBuilder 2.5.2.8
  * Locale: English (en)
  * Author: Damien "Mistic" Sorel, http://www.strangeplanet.fr
  * Licensed under MIT (https://opensource.org/licenses/MIT)
