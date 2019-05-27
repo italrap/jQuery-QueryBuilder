@@ -276,7 +276,7 @@
 
 
 /*!
- * jQuery QueryBuilder 2.5.2.8
+ * jQuery QueryBuilder 2.5.2.10
  * Copyright 2014-2019 Damien "Mistic" Sorel (http://www.strangeplanet.fr)
  * Licensed under MIT (https://opensource.org/licenses/MIT)
  */
@@ -4562,10 +4562,10 @@ QueryBuilder.define('collapse-groups', function(options) {
         $.each($(Selectors.group_container), function(i, el) {
             var group = self.getModel($(el));
             if (group.collapsed) {
-                self.collapse($(el).find('[data-collapse="group"]'), options);
+                self.collapse($(el).find('[data-collapse="group"]:first'), options);
             }
             if (group.name) {
-                $(el).find('.group-name').val(group.name);
+                $(el).find('.group-name:first').val(group.name);
             }
         });
     });
@@ -4624,10 +4624,10 @@ QueryBuilder.extend({
         var selectors = QueryBuilder.selectors;
         var $iconEl = $el.find('i');
 
-        $el.closest(selectors.group_container).find(selectors.rules_list).slideToggle('fast');
-        $el.parent().parent().find(selectors.group_condition).parent().parent().toggleClass("collapsed");
-        $el.parent().parent().find(selectors.add_rule).toggleClass("collapsed");
-        $el.parent().parent().find(selectors.add_group).toggleClass("collapsed");
+        $el.closest(selectors.group_container).find(selectors.rules_list+':first').slideToggle('fast');
+        $el.parent().parent().find(selectors.group_condition+':first').parent().parent().toggleClass("collapsed");
+        $el.parent().parent().find(selectors.add_rule+':first').toggleClass("collapsed");
+        $el.parent().parent().find(selectors.add_group+':first').toggleClass("collapsed");
         
         $iconEl.toggleClass(options.iconUp).toggleClass(options.iconDown);
     },
@@ -6608,7 +6608,7 @@ QueryBuilder.extend(/** @lends module:plugins.UniqueFilter.prototype */ {
 
 
 /*!
- * jQuery QueryBuilder 2.5.2.8
+ * jQuery QueryBuilder 2.5.2.10
  * Locale: English (en)
  * Author: Damien "Mistic" Sorel, http://www.strangeplanet.fr
  * Licensed under MIT (https://opensource.org/licenses/MIT)
