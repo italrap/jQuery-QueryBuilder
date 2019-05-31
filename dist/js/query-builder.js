@@ -4282,7 +4282,7 @@ QueryBuilder.define('collapse-groups', function(options) {
 
     // Collapse any groups that were saved as collapsed
     this.on('afterSetRules', function() {
-        $.each($(Selectors.group_container), function(i, el) {
+        $.each(self.$el.find(Selectors.group_container), function(i, el) {
             var group = self.getModel($(el));
             if (group.collapsed) {
                 self.collapse($(el).find('[data-collapse="group"]:first'), options);
