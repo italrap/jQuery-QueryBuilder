@@ -5,18 +5,6 @@
  * Licensed under MIT (https://opensource.org/licenses/MIT)
  */
 
-(function(root, factory) {
-    if (typeof define == 'function' && define.amd) {
-        define(['jquery', 'query-builder'], factory);
-    }
-    else {
-        factory(root.jQuery);
-    }
-}(this, function($) {
-"use strict";
-
-var QueryBuilder = $.fn.queryBuilder;
-
 QueryBuilder.regional['he'] = {
   "__locale": "Hebrew (he)",
   "__author": "Kfir Stri https://github.com/kfirstri",
@@ -78,4 +66,3 @@ QueryBuilder.regional['he'] = {
 };
 
 QueryBuilder.defaults({ lang_code: 'he' });
-}));

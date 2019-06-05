@@ -5,18 +5,6 @@
  * Licensed under MIT (https://opensource.org/licenses/MIT)
  */
 
-(function(root, factory) {
-    if (typeof define == 'function' && define.amd) {
-        define(['jquery', 'query-builder'], factory);
-    }
-    else {
-        factory(root.jQuery);
-    }
-}(this, function($) {
-"use strict";
-
-var QueryBuilder = $.fn.queryBuilder;
-
 QueryBuilder.regional['tr'] = {
   "__locale": "Turkish (tr)",
   "__author": "Aykut Alpgiray Ateş",
@@ -79,4 +67,3 @@ QueryBuilder.regional['tr'] = {
 };
 
 QueryBuilder.defaults({ lang_code: 'tr' });
-}));

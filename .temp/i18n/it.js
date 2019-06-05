@@ -1,7 +1,13 @@
-{
+/*!
+ * jQuery QueryBuilder 2.5.2.13
+ * Locale: Italian (it)
+ * Author: davegraziosi
+ * Licensed under MIT (https://opensource.org/licenses/MIT)
+ */
+
+QueryBuilder.regional['it'] = {
   "__locale": "Italian (it)",
   "__author": "davegraziosi",
-
   "add_rule": "Aggiungi regola",
   "add_group": "Aggiungi gruppo",
   "delete_rule": "Elimina",
@@ -10,12 +16,10 @@
   "add_group_title": "Aggiungi gruppo",
   "delete_rule_title": "Elimina regola",
   "delete_group_title": "Elimina gruppo",
-
   "conditions": {
     "AND": "E",
     "OR": "O"
   },
-
   "operators": {
     "equal": "uguale",
     "not_equal": "non uguale",
@@ -25,8 +29,8 @@
     "less_or_equal": "minore o uguale",
     "greater": "maggiore",
     "greater_or_equal": "maggiore o uguale",
-    "between" : "compreso tra",
-    "not_between" : "non compreso tra",
+    "between": "compreso tra",
+    "not_between": "non compreso tra",
     "begins_with": "inizia con",
     "not_begins_with": "non inizia con",
     "contains": "contiene",
@@ -38,7 +42,6 @@
     "is_null": "è nullo",
     "is_not_null": "non è nullo"
   },
-
   "errors": {
     "no_filter": "Nessun filtro selezionato",
     "empty_group": "Il gruppo è vuoto",
@@ -62,4 +65,6 @@
     "boolean_not_valid": "Non è un booleano",
     "operator_not_multiple": "L'Operatore {0} non può accettare valori multipli"
   }
-}
+};
+
+QueryBuilder.defaults({ lang_code: 'it' });

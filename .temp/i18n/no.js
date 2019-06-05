@@ -5,18 +5,6 @@
  * Licensed under MIT (https://opensource.org/licenses/MIT)
  */
 
-(function(root, factory) {
-    if (typeof define == 'function' && define.amd) {
-        define(['jquery', 'query-builder'], factory);
-    }
-    else {
-        factory(root.jQuery);
-    }
-}(this, function($) {
-"use strict";
-
-var QueryBuilder = $.fn.queryBuilder;
-
 QueryBuilder.regional['no'] = {
   "__locale": "Norwegian (no)",
   "__author": "Jna Borup Coyle, github@coyle.dk",
@@ -51,4 +39,3 @@ QueryBuilder.regional['no'] = {
 };
 
 QueryBuilder.defaults({ lang_code: 'no' });
-}));

@@ -5,18 +5,6 @@
  * Licensed under MIT (https://opensource.org/licenses/MIT)
  */
 
-(function(root, factory) {
-    if (typeof define == 'function' && define.amd) {
-        define(['jquery', 'query-builder'], factory);
-    }
-    else {
-        factory(root.jQuery);
-    }
-}(this, function($) {
-"use strict";
-
-var QueryBuilder = $.fn.queryBuilder;
-
 QueryBuilder.regional['pl'] = {
   "__locale": "Polish (pl)",
   "__author": "Artur Smolarek",
@@ -77,4 +65,3 @@ QueryBuilder.regional['pl'] = {
 };
 
 QueryBuilder.defaults({ lang_code: 'pl' });
-}));

@@ -276,7 +276,7 @@
 
 
 /*!
- * jQuery QueryBuilder 2.5.2.12
+ * jQuery QueryBuilder 2.5.2.13
  * Copyright 2014-2019 Damien "Mistic" Sorel (http://www.strangeplanet.fr)
  * Licensed under MIT (https://opensource.org/licenses/MIT)
  */
@@ -2964,16 +2964,16 @@ QueryBuilder.templates.group = '\
   <div class="rules-group-header"> \
     <div class="btn-group pull-right group-actions"> \
       <button type="button" class="btn btn-xs btn-success" data-add="rule"> \
-        <i class="{{= it.icons.add_rule }}" title="{{= it.translate("add_rule") }}" ></i> {{= it.translate("add_rule") }} \
+        <i class="{{= it.icons.add_rule }}" title="{{= it.translate('add_rule_title') }}" ></i> {{= it.translate("add_rule") }} \
       </button> \
       {{? it.settings.allow_groups===-1 || it.settings.allow_groups>=it.level }} \
         <button type="button" class="btn btn-xs btn-success" data-add="group"> \
-          <i class="{{= it.icons.add_group }}" title="{{= it.translate("add_group") }}"></i> {{= it.translate("add_group") }} \
+          <i class="{{= it.icons.add_group }}" title="{{= it.translate('add_group_title') }}"></i> {{= it.translate("add_group") }} \
         </button> \
       {{?}} \
       {{? it.level>1 }} \
         <button type="button" class="btn btn-xs btn-danger" data-delete="group"> \
-          <i class="{{= it.icons.remove_group }}" title="{{= it.translate("delete_group") }}" ></i> {{= it.translate("delete_group") }} \
+          <i class="{{= it.icons.remove_group }}" title="{{= it.translate('delete_group_title') }}" ></i> {{= it.translate("delete_group") }} \
         </button> \
       {{?}} \
     </div> \
@@ -2998,7 +2998,7 @@ QueryBuilder.templates.rule = '\
   <div class="rule-header"> \
     <div class="btn-group pull-right rule-actions"> \
       <button type="button" class="btn btn-xs btn-danger" data-delete="rule"> \
-        <i class="{{= it.icons.remove_rule }}" title="{{= it.translate("delete_rule") }}" ></i> {{= it.translate("delete_rule") }} \
+        <i class="{{= it.icons.remove_rule }}" title="{{= it.translate('delete_rule_title') }}" ></i> {{= it.translate("delete_rule") }} \
       </button> \
     </div> \
   </div> \
@@ -6608,7 +6608,7 @@ QueryBuilder.extend(/** @lends module:plugins.UniqueFilter.prototype */ {
 
 
 /*!
- * jQuery QueryBuilder 2.5.2.12
+ * jQuery QueryBuilder 2.5.2.13
  * Locale: English (en)
  * Author: Damien "Mistic" Sorel, http://www.strangeplanet.fr
  * Licensed under MIT (https://opensource.org/licenses/MIT)
@@ -6621,6 +6621,10 @@ QueryBuilder.regional['en'] = {
   "add_group": "Add group",
   "delete_rule": "Delete",
   "delete_group": "Delete",
+  "add_rule_title": "Add rule",
+  "add_group_title": "Add group",
+  "delete_rule_title": "Delete rule",
+  "delete_group_title": "Delete group",
   "conditions": {
     "AND": "AND",
     "OR": "OR"

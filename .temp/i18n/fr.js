@@ -5,18 +5,6 @@
  * Licensed under MIT (https://opensource.org/licenses/MIT)
  */
 
-(function(root, factory) {
-    if (typeof define == 'function' && define.amd) {
-        define(['jquery', 'query-builder'], factory);
-    }
-    else {
-        factory(root.jQuery);
-    }
-}(this, function($) {
-"use strict";
-
-var QueryBuilder = $.fn.queryBuilder;
-
 QueryBuilder.regional['fr'] = {
   "__locale": "French (fr)",
   "__author": "Damien \"Mistic\" Sorel, http://www.strangeplanet.fr",
@@ -80,4 +68,3 @@ QueryBuilder.regional['fr'] = {
 };
 
 QueryBuilder.defaults({ lang_code: 'fr' });
-}));

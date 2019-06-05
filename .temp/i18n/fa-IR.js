@@ -5,18 +5,6 @@
  * Licensed under MIT (https://opensource.org/licenses/MIT)
  */
 
-(function(root, factory) {
-    if (typeof define == 'function' && define.amd) {
-        define(['jquery', 'query-builder'], factory);
-    }
-    else {
-        factory(root.jQuery);
-    }
-}(this, function($) {
-"use strict";
-
-var QueryBuilder = $.fn.queryBuilder;
-
 QueryBuilder.regional['fa-IR'] = {
   "__locale": "Farsi (fa-ir)",
   "__author": "Behzad Sedighzade, behzad.sedighzade@gmail.com",
@@ -76,4 +64,3 @@ QueryBuilder.regional['fa-IR'] = {
 };
 
 QueryBuilder.defaults({ lang_code: 'fa-IR' });
-}));

@@ -1,5 +1,5 @@
 /*!
- * jQuery QueryBuilder 2.5.2.12
+ * jQuery QueryBuilder 2.5.2.13
  * Locale: Italian (it)
  * Author: davegraziosi
  * Licensed under MIT (https://opensource.org/licenses/MIT)
@@ -24,6 +24,10 @@ QueryBuilder.regional['it'] = {
   "add_group": "Aggiungi gruppo",
   "delete_rule": "Elimina",
   "delete_group": "Elimina",
+  "add_rule_title": "Aggiungi regola",
+  "add_group_title": "Aggiungi gruppo",
+  "delete_rule_title": "Elimina regola",
+  "delete_group_title": "Elimina gruppo",
   "conditions": {
     "AND": "E",
     "OR": "O"
