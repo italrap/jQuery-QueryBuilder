@@ -1,5 +1,5 @@
 /*!
- * jQuery QueryBuilder 2.5.2.13
+ * jQuery QueryBuilder 2.5.2.14
  * Locale: Čeština (cs)
  * Author: Megaplan, mborisv <bm@megaplan.ru>
  * Licensed under MIT (https://opensource.org/licenses/MIT)
