@@ -325,7 +325,7 @@ QueryBuilder.extend(/** @lends module:plugins.SqlSupport.prototype */ {
                                 value += stmt.add(rule, v);
                             }
                             else {
-                            	if (sql.ic) {
+                            	if (sql.ic || rule.data.ignore_case===true) {
 	                            	if (sql.sep) {
 		                            	if (typeof v === 'string') { 
 		                            		v = v.split(',').map(function(e) { return '\'' + e.trim().toLowerCase()+ '\'';});
@@ -407,7 +407,7 @@ QueryBuilder.extend(/** @lends module:plugins.SqlSupport.prototype */ {
                      * @returns {string}
                      */
                     var field = self.change('getSQLField', rule.field, rule);
-		    if (sql.ic) {
+		    if (sql.ic || rule.data.ignore_case===true) {
 			field = "LOWER("+field+")";
 		    }
                     var ruleExpression = field + ' ' + sqlFn(value);
