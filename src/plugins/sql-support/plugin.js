@@ -407,10 +407,16 @@ QueryBuilder.extend(/** @lends module:plugins.SqlSupport.prototype */ {
                      * @returns {string}
                      */
                     var field = self.change('getSQLField', rule.field, rule);
-		    if (sql.ic || rule.data.ignore_case===true) {
-			field = "LOWER("+field+")";
-		    }
-                    var ruleExpression = field + ' ' + sqlFn(value);
+                    if (sql.ic || rule.data.ignore_case===true) {
+                        field = "LOWER("+field+")";
+                    }
+
+                    var ruleExpression;
+                    if (typeof sql.sqlFullFn === 'function' ){
+                        ruleExpression = sql.sqlFullFn(field, value, rule.value);
+                    } else {
+                        ruleExpression = field + ' ' + sqlFn(value);
+                    }
 
                     /**
                      * Modifies the SQL generated for a rule
