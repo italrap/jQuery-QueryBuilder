@@ -276,30 +276,21 @@
 
 
 /*!
- * jQuery QueryBuilder 2.5.3
+ * jQuery QueryBuilder 2.5.2.16
  * Copyright 2014-2019 Damien "Mistic" Sorel (http://www.strangeplanet.fr)
  * Licensed under MIT (https://opensource.org/licenses/MIT)
  */
 (function(root, factory) {
     if (typeof define == 'function' && define.amd) {
-        define('query-builder', ['jquery', 'dot/doT', 'jquery-extendext', window], factory);
+        define('query-builder', ['jquery', 'dot/doT', 'jquery-extendext'], factory);
     }
     else if (typeof module === 'object' && module.exports) {
-        if(root.document){
-            module.exports = factory(require('jquery'), require('dot/doT'), require('jquery-extendext'));
-        } else {
-            module.exports = function( $, window ) {
-				if ( !$ ) {
-					throw new Error( "jQuery QueryBuilder requires a jQuery Instance" );
-				}
-				return factory( $, require('dot/doT'), undefined, window);
-			};
-        }
+        module.exports = factory(require('jquery'), require('dot/doT'), require('jquery-extendext'));
     }
     else {
-        factory(root.jQuery, root.doT, undefined, window);
+        factory(root.jQuery, root.doT);
     }
-}(this, function($, doT, ext, window) {
+}(this, function($, doT) {
 "use strict";
 
 /**
@@ -319,7 +310,6 @@
  * @param {object} options - see {@link http://querybuilder.js.org/#options}
  * @constructor
  */
-var SQLParser = window && window.SQLParser;
 var QueryBuilder = function($el, options) {
     $el[0].queryBuilder = this;
 
@@ -2974,16 +2964,16 @@ QueryBuilder.templates.group = '\
   <div class="rules-group-header"> \
     <div class="btn-group pull-right group-actions"> \
       <button type="button" class="btn btn-xs btn-success" data-add="rule"> \
-        <i class="{{= it.icons.add_rule }}"></i> {{= it.translate("add_rule") }} \
+        <i class="{{= it.icons.add_rule }}" title="{{= it.translate("add_rule_title") }}" ></i> {{= it.translate("add_rule") }} \
       </button> \
       {{? it.settings.allow_groups===-1 || it.settings.allow_groups>=it.level }} \
         <button type="button" class="btn btn-xs btn-success" data-add="group"> \
-          <i class="{{= it.icons.add_group }}"></i> {{= it.translate("add_group") }} \
+          <i class="{{= it.icons.add_group }}" title="{{= it.translate("add_group_title") }}"></i> {{= it.translate("add_group") }} \
         </button> \
       {{?}} \
       {{? it.level>1 }} \
         <button type="button" class="btn btn-xs btn-danger" data-delete="group"> \
-          <i class="{{= it.icons.remove_group }}"></i> {{= it.translate("delete_group") }} \
+          <i class="{{= it.icons.remove_group }}" title="{{= it.translate("delete_group_title") }}" ></i> {{= it.translate("delete_group") }} \
         </button> \
       {{?}} \
     </div> \
@@ -3008,7 +2998,7 @@ QueryBuilder.templates.rule = '\
   <div class="rule-header"> \
     <div class="btn-group pull-right rule-actions"> \
       <button type="button" class="btn btn-xs btn-danger" data-delete="rule"> \
-        <i class="{{= it.icons.remove_rule }}"></i> {{= it.translate("delete_rule") }} \
+        <i class="{{= it.icons.remove_rule }}" title="{{= it.translate("delete_rule_title") }}" ></i> {{= it.translate("delete_rule") }} \
       </button> \
     </div> \
   </div> \
@@ -4569,13 +4559,13 @@ QueryBuilder.define('collapse-groups', function(options) {
 
     // Collapse any groups that were saved as collapsed
     this.on('afterSetRules', function() {
-        $.each($(Selectors.group_container), function(i, el) {
+        $.each(self.$el.find(Selectors.group_container), function(i, el) {
             var group = self.getModel($(el));
             if (group.collapsed) {
-                self.collapse($(el).find('[data-collapse="group"]'), options);
+                self.collapse($(el).find('[data-collapse="group"]:first'), options);
             }
             if (group.name) {
-                $(el).find('.group-name').val(group.name);
+                $(el).find('.group-name:first').val(group.name);
             }
         });
     });
@@ -4634,10 +4624,10 @@ QueryBuilder.extend({
         var selectors = QueryBuilder.selectors;
         var $iconEl = $el.find('i');
 
-        $el.closest(selectors.group_container).find(selectors.rules_list).slideToggle('fast');
-        $el.parent().parent().find(selectors.group_condition).parent().parent().toggleClass("collapsed");
-        $el.parent().parent().find(selectors.add_rule).toggleClass("collapsed");
-        $el.parent().parent().find(selectors.add_group).toggleClass("collapsed");
+        $el.closest(selectors.group_container).find(selectors.rules_list+':first').slideToggle('fast');
+        $el.parent().parent().find(selectors.group_condition+':first').parent().parent().toggleClass("collapsed");
+        $el.parent().parent().find(selectors.add_rule+':first').toggleClass("collapsed");
+        $el.parent().parent().find(selectors.add_group+':first').toggleClass("collapsed");
         
         $iconEl.toggleClass(options.iconUp).toggleClass(options.iconDown);
     },
@@ -6067,6 +6057,13 @@ QueryBuilder.extend(/** @lends module:plugins.SqlSupport.prototype */ {
                     if (sql === undefined) {
                         Utils.error('UndefinedSQLOperator', 'Unknown SQL operation for operator "{0}"', rule.operator);
                     }
+                    var sqlFn;
+
+                    if (typeof sql.sqlFn == 'function' ){
+                        sqlFn = function(v) {
+                            return sql.sqlFn(rule.value);
+                        };
+                    } else {
 
                     if (ope.nb_inputs !== 0) {
                         if (!(rule.value instanceof Array)) {
@@ -6093,7 +6090,7 @@ QueryBuilder.extend(/** @lends module:plugins.SqlSupport.prototype */ {
                                 value += stmt.add(rule, v);
                             }
                             else {
-                            	if (sql.ic) {
+                            	if (sql.ic || rule.data.ignore_case===true) {
 	                            	if (sql.sep) {
 		                            	if (typeof v === 'string') { 
 		                            		v = v.split(',').map(function(e) { return '\'' + e.trim().toLowerCase()+ '\'';});
@@ -6102,8 +6099,8 @@ QueryBuilder.extend(/** @lends module:plugins.SqlSupport.prototype */ {
 		  				    	v = v.map(function(e) { return e.toString().trim().toLowerCase();});
 		  			        }
 	                            	} else {
-	                            		v = v.toLowerCase();
 	                            		if (typeof v == 'string') {
+											v = v.toLowerCase();
 	                                    	v = '\'' + v + '\'';
 	                                    }
 	                            	}
@@ -6160,12 +6157,12 @@ QueryBuilder.extend(/** @lends module:plugins.SqlSupport.prototype */ {
                         });
                     }
 
-                    var sqlFn = function(v) {
+                    sqlFn = function(v) {
                         return sql.op.replace('?', function() {
                             return v;
                         });
                     };
-
+                    }
                     /**
                      * Modifies the SQL field used by a rule
                      * @event changer:getSQLField
@@ -6175,10 +6172,16 @@ QueryBuilder.extend(/** @lends module:plugins.SqlSupport.prototype */ {
                      * @returns {string}
                      */
                     var field = self.change('getSQLField', rule.field, rule);
-		    if (sql.ic) {
-			field = "LOWER("+field+")";
-		    }
-                    var ruleExpression = field + ' ' + sqlFn(value);
+                    if (sql.ic || rule.data.ignore_case===true) {
+                        field = "LOWER("+field+")";
+                    }
+
+                    var ruleExpression;
+                    if (typeof sql.sqlFullFn === 'function' ){
+                        ruleExpression = sql.sqlFullFn(field, value, rule.value);
+                    } else {
+                        ruleExpression = field + ' ' + sqlFn(value);
+                    }
 
                     /**
                      * Modifies the SQL generated for a rule
@@ -6611,7 +6614,7 @@ QueryBuilder.extend(/** @lends module:plugins.UniqueFilter.prototype */ {
 
 
 /*!
- * jQuery QueryBuilder 2.5.3
+ * jQuery QueryBuilder 2.5.2.16
  * Locale: English (en)
  * Author: Damien "Mistic" Sorel, http://www.strangeplanet.fr
  * Licensed under MIT (https://opensource.org/licenses/MIT)
@@ -6624,6 +6627,10 @@ QueryBuilder.regional['en'] = {
   "add_group": "Add group",
   "delete_rule": "Delete",
   "delete_group": "Delete",
+  "add_rule_title": "Add rule",
+  "add_group_title": "Add group",
+  "delete_rule_title": "Delete rule",
+  "delete_group_title": "Delete group",
   "conditions": {
     "AND": "AND",
     "OR": "OR"

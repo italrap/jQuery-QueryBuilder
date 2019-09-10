@@ -25,13 +25,13 @@ QueryBuilder.define('collapse-groups', function(options) {
 
     // Collapse any groups that were saved as collapsed
     this.on('afterSetRules', function() {
-        $.each($(Selectors.group_container), function(i, el) {
+        $.each(self.$el.find(Selectors.group_container), function(i, el) {
             var group = self.getModel($(el));
             if (group.collapsed) {
-                self.collapse($(el).find('[data-collapse="group"]'), options);
+                self.collapse($(el).find('[data-collapse="group"]:first'), options);
             }
             if (group.name) {
-                $(el).find('.group-name').val(group.name);
+                $(el).find('.group-name:first').val(group.name);
             }
         });
     });
@@ -90,10 +90,10 @@ QueryBuilder.extend({
         var selectors = QueryBuilder.selectors;
         var $iconEl = $el.find('i');
 
-        $el.closest(selectors.group_container).find(selectors.rules_list).slideToggle('fast');
-        $el.parent().parent().find(selectors.group_condition).parent().parent().toggleClass("collapsed");
-        $el.parent().parent().find(selectors.add_rule).toggleClass("collapsed");
-        $el.parent().parent().find(selectors.add_group).toggleClass("collapsed");
+        $el.closest(selectors.group_container).find(selectors.rules_list+':first').slideToggle('fast');
+        $el.parent().parent().find(selectors.group_condition+':first').parent().parent().toggleClass("collapsed");
+        $el.parent().parent().find(selectors.add_rule+':first').toggleClass("collapsed");
+        $el.parent().parent().find(selectors.add_group+':first').toggleClass("collapsed");
         
         $iconEl.toggleClass(options.iconUp).toggleClass(options.iconDown);
     },

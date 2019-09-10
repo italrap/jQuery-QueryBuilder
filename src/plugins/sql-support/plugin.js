@@ -292,6 +292,13 @@ QueryBuilder.extend(/** @lends module:plugins.SqlSupport.prototype */ {
                     if (sql === undefined) {
                         Utils.error('UndefinedSQLOperator', 'Unknown SQL operation for operator "{0}"', rule.operator);
                     }
+                    var sqlFn;
+
+                    if (typeof sql.sqlFn == 'function' ){
+                        sqlFn = function(v) {
+                            return sql.sqlFn(rule.value);
+                        };
+                    } else {
 
                     if (ope.nb_inputs !== 0) {
                         if (!(rule.value instanceof Array)) {
@@ -318,7 +325,7 @@ QueryBuilder.extend(/** @lends module:plugins.SqlSupport.prototype */ {
                                 value += stmt.add(rule, v);
                             }
                             else {
-                            	if (sql.ic) {
+                            	if (sql.ic || rule.data.ignore_case===true) {
 	                            	if (sql.sep) {
 		                            	if (typeof v === 'string') { 
 		                            		v = v.split(',').map(function(e) { return '\'' + e.trim().toLowerCase()+ '\'';});
@@ -327,8 +334,8 @@ QueryBuilder.extend(/** @lends module:plugins.SqlSupport.prototype */ {
 		  				    	v = v.map(function(e) { return e.toString().trim().toLowerCase();});
 		  			        }
 	                            	} else {
-	                            		v = v.toLowerCase();
 	                            		if (typeof v == 'string') {
+											v = v.toLowerCase();
 	                                    	v = '\'' + v + '\'';
 	                                    }
 	                            	}
@@ -385,12 +392,12 @@ QueryBuilder.extend(/** @lends module:plugins.SqlSupport.prototype */ {
                         });
                     }
 
-                    var sqlFn = function(v) {
+                    sqlFn = function(v) {
                         return sql.op.replace('?', function() {
                             return v;
                         });
                     };
-
+                    }
                     /**
                      * Modifies the SQL field used by a rule
                      * @event changer:getSQLField
@@ -400,10 +407,16 @@ QueryBuilder.extend(/** @lends module:plugins.SqlSupport.prototype */ {
                      * @returns {string}
                      */
                     var field = self.change('getSQLField', rule.field, rule);
-		    if (sql.ic) {
-			field = "LOWER("+field+")";
-		    }
-                    var ruleExpression = field + ' ' + sqlFn(value);
+                    if (sql.ic || rule.data.ignore_case===true) {
+                        field = "LOWER("+field+")";
+                    }
+
+                    var ruleExpression;
+                    if (typeof sql.sqlFullFn === 'function' ){
+                        ruleExpression = sql.sqlFullFn(field, value, rule.value);
+                    } else {
+                        ruleExpression = field + ' ' + sqlFn(value);
+                    }
 
                     /**
                      * Modifies the SQL generated for a rule

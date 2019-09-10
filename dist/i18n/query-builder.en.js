@@ -1,5 +1,5 @@
 /*!
- * jQuery QueryBuilder 2.5.3
+ * jQuery QueryBuilder 2.5.2.16
  * Locale: English (en)
  * Author: Damien "Mistic" Sorel, http://www.strangeplanet.fr
  * Licensed under MIT (https://opensource.org/licenses/MIT)
@@ -24,6 +24,10 @@ QueryBuilder.regional['en'] = {
   "add_group": "Add group",
   "delete_rule": "Delete",
   "delete_group": "Delete",
+  "add_rule_title": "Add rule",
+  "add_group_title": "Add group",
+  "delete_rule_title": "Delete rule",
+  "delete_group_title": "Delete group",
   "conditions": {
     "AND": "AND",
     "OR": "OR"
