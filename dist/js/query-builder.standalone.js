@@ -276,7 +276,7 @@
 
 
 /*!
- * jQuery QueryBuilder 2.5.2.15
+ * jQuery QueryBuilder 2.5.2.16
  * Copyright 2014-2019 Damien "Mistic" Sorel (http://www.strangeplanet.fr)
  * Licensed under MIT (https://opensource.org/licenses/MIT)
  */
@@ -6172,10 +6172,16 @@ QueryBuilder.extend(/** @lends module:plugins.SqlSupport.prototype */ {
                      * @returns {string}
                      */
                     var field = self.change('getSQLField', rule.field, rule);
-		    if (sql.ic || rule.data.ignore_case===true) {
-			field = "LOWER("+field+")";
-		    }
-                    var ruleExpression = field + ' ' + sqlFn(value);
+                    if (sql.ic || rule.data.ignore_case===true) {
+                        field = "LOWER("+field+")";
+                    }
+
+                    var ruleExpression;
+                    if (typeof sql.sqlFullFn === 'function' ){
+                        ruleExpression = sql.sqlFullFn(field, value, rule.value);
+                    } else {
+                        ruleExpression = field + ' ' + sqlFn(value);
+                    }
 
                     /**
                      * Modifies the SQL generated for a rule
@@ -6608,7 +6614,7 @@ QueryBuilder.extend(/** @lends module:plugins.UniqueFilter.prototype */ {
 
 
 /*!
- * jQuery QueryBuilder 2.5.2.15
+ * jQuery QueryBuilder 2.5.2.16
  * Locale: English (en)
  * Author: Damien "Mistic" Sorel, http://www.strangeplanet.fr
  * Licensed under MIT (https://opensource.org/licenses/MIT)
